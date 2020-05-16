@@ -110,9 +110,6 @@ public class DrawingView extends View {
         //initializing without context
         init();
     }
-    public void Hello(){
-        mTouchPoints.toArray(new Object[mTouchPoints.size()]);
-    }
 
     /**
      *  Function to initialize all the variables of the class that do not require a context
