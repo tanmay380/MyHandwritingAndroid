@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.example.myapplication.*;
 
 public class MainActivity extends AppCompatActivity {
-    public static DisplayMetrics mDisplayMetrics=null;
+    public static DisplayMetrics mDisplayMetrics;
     public DrawingView mDrawView;
 
 
@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mDrawView=(DrawingView) findViewById(R.id.Drawingview);
-        mDisplayMetrics.heightPixels=2190;
-        mDisplayMetrics.widthPixels=1080;
+        mDisplayMetrics=getResources().getDisplayMetrics();
+        mDisplayMetrics= getResources().getDisplayMetrics();
         Toast.makeText(getApplicationContext(),mDisplayMetrics.widthPixels+","+mDisplayMetrics.heightPixels,Toast.LENGTH_SHORT).show();
         //mDrawView.setBitmapFromText("H");
         mDrawView.init();
