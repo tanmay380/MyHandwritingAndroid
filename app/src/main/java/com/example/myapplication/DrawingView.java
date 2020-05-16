@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.os.Vibrator;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
 
 public class DrawingView extends View {
@@ -74,13 +77,10 @@ public class DrawingView extends View {
     /**
      * View width
      */
-    public int mWidth;
+    public int mWidth;//=MainActivity.getwidht();
+    Integer mwidhth1=MainActivity.getwidht(getContext());
 
-    /**
-     * View height
-     */
     public int mHeight;
-
 
     public DrawingView(Context context) {
         super(context);
@@ -98,17 +98,17 @@ public class DrawingView extends View {
         super(context, attrs, defStyle);
         init(context);
     }
-
     private void init(Context context) {
         //context based init goes here
         mContext = context;
-        //Getting display width and height
-        mWidth =  MainActivity.mDisplayMetrics.widthPixels;
-        mHeight = MainActivity.mDisplayMetrics.heightPixels;
+        //Getting display width and
+        mHeight = 2190;//MainActivity.mDisplayMetrics.heightPixels;
+        mWidth = 1080;//MainActivity.mDisplayMetrics.heightPixels;
+        Log.isLoggable("Data Value",mwidhth1);
 
 
         //initializing without context
-        init();
+        //init();
     }
 
     /**
@@ -149,12 +149,12 @@ public class DrawingView extends View {
         mCanvasBitmap = Bitmap.createBitmap(mWidth,mHeight, Bitmap.Config.ARGB_4444);
         mDrawCanvas = new Canvas(mCanvasBitmap);
     }
-    @Override
+    /*@Override
     protected void onDraw(Canvas canvas) {
         //draw view
         canvas.drawBitmap(mCanvasBitmap, 0, 0, mCanvasPaint);
         canvas.drawPath(mDrawPath, mDrawPaint);
-    }
+    }*/
 
 
 
