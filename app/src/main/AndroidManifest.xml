@@ -13,18 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ActionBarTheme">
-       <!-- <activity android:name=".PracticeBaseActivity"></activity>
-        <activity android:name=".PracticeActivity">-->
-
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize">
+        <activity android:name=".alphabetShow" />
+        <activity android:name=".CharacterSelection" />
+        <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LanguageSelection"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>
