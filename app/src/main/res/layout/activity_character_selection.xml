@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ActionbarBg"
-        app:navigationIcon="@drawable/ic_launcher"
-        app:title="@string/app_name"
+        app:title="SELECT CHARACTER"
         app:titleTextAppearance="@style/AppTheme.Toolbar.Title" />
 
     <ScrollView

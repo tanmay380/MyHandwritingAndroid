@@ -11,37 +11,54 @@
         android:id="@+id/PracticeToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="CONGRATS "
-        android:background="@color/ActionbarBg"/>
+        android:background="@color/ActionbarBg"
+        app:title="CONGRATS " />
+    <Button
+        android:id="@+id/erase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ERASE FROM HERE"
+        android:onClick="erase"
+        android:layout_marginTop="55dp"/>
+
+    <SeekBar
+        android:id="@+id/size1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:min="1"
+        android:layout_marginTop="100dp"
+        android:progress="3"
+        android:visibility="invisible" />
 
     <com.example.myapplication.DrawingView
-        android:id="@+id/DrawingView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"/>
+            android:id="@+id/DrawingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"/>
 
-    <com.software.shell.fab.ActionButton
-        android:id="@+id/done"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="0dp"
-        app:button_color="@color/ButtonBg"
-        app:image="@drawable/ic_done"
-        android:onClick="practiceonclick"/>
+        <com.software.shell.fab.ActionButton
+            android:id="@+id/done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp"
+            android:onClick="practiceonclick"
+            app:button_color="@color/ButtonBg"
+            app:image="@drawable/ic_done" />
 
-    <com.software.shell.fab.ActionButton
-        android:id="@+id/reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        app:button_color="@color/ButtonBg"
-        app:image="@drawable/ic_reset"
-        android:onClick="practiceonclick"/>
+        <com.software.shell.fab.ActionButton
+            android:id="@+id/reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:onClick="practiceonclick"
+            app:button_color="@color/ButtonBg"
+            app:image="@drawable/ic_reset" />
 </RelativeLayout>

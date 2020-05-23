@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 
 public class SplashScreen extends AppCompatActivity {
     public static String[] CHARACTER_LIST;
+
     public static DisplayMetrics displayMetrics;
 
 
