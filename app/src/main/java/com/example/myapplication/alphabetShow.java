@@ -140,9 +140,11 @@ public class alphabetShow extends AppCompatActivity {
                 break;
             case R.id.undo:
                 mdrawview.onClickUndo();
+               // mdrawview.setBitmapFromText(mPractiseString);
                 break;
             case R.id.redo:
                 mdrawview.onClickRedo();
+
                 break;
 
         }

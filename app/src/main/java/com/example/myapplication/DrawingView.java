@@ -20,11 +20,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Stack;
 
 public class DrawingView extends View {
     private Path mDrawPath;
 
-    private ArrayList<Path> paths= new ArrayList<>();
+    private HashMap<Integer, Path> pathMap; // current Paths being drawn
+    private HashMap<Integer, Point> previousPointMap; // current Points
+    private Stack<Path> paths= new Stack<Path>();
     private ArrayList<Path> undoPath= new ArrayList<>();
 
     private DisplayMetrics displayMetrics;
@@ -37,7 +41,7 @@ public class DrawingView extends View {
     /**
      * The canvas of the view
      */
-    private Canvas mDrawCanvas;
+    private Canvas mDrawCanvas,mbitmapbackupcanvas;
 
     /**
      * The bitmap that is set
@@ -133,6 +137,7 @@ public class DrawingView extends View {
         mDrawPaint = new Paint();
         mDrawPaint.setColor(mTouchColour);
         mDrawPaint.setAntiAlias(true);
+        mDrawCanvas=new Canvas();
 
         //Setting the paint to draw round strokes
         mDrawPaint.setStyle(Paint.Style.STROKE);
@@ -167,11 +172,10 @@ public class DrawingView extends View {
     @Override
     public void onDraw(Canvas canvas) {
 
-        canvas.drawBitmap(mCanvasBitmap, 0, 0, mCanvasPaint);
         //draw view
-        for(Path p:paths){
-            canvas.drawPath(p,mDrawPaint);
-        }
+
+
+        canvas.drawBitmap(mCanvasBitmap, 0, 0, mCanvasPaint);
         canvas.drawPath(mDrawPath, mDrawPaint);
         mDrawPaint.setStrokeWidth(currentWidht);
     }
@@ -197,6 +201,12 @@ public class DrawingView extends View {
         invalidate();
     }
 
+    public void setBitmap(Bitmap b) {
+        init();
+        //Drawing the bitmap at the center of the view
+        mDrawCanvas.drawBitmap(b, (mWidth - b.getWidth()) / 2, (mHeight - b.getHeight()) / 2, mCanvasPaint);
+        invalidate();
+    }
     public void canerase(Boolean iserasing) {
         erase = iserasing;
 
@@ -211,8 +221,16 @@ public class DrawingView extends View {
 
     public void onClickUndo () {
         if (paths.size()>0) {
-            paths.remove(paths.size()-1);
-            invalidate();
+            paths.pop();
+            mDrawCanvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
+
+            Toast.makeText(getContext(),Integer.toString(paths.size()),Toast.LENGTH_SHORT).show();
+
+            for (Path p:paths
+            ) {//mDrawCanvas.drawBitmap();
+               // mDrawCanvas.drawColor(Color.WHITE);
+                mDrawCanvas.drawPath(p,mDrawPaint);}
+
         }else{
             Toast.makeText(getContext(),"NOTHING TO UNDO", Toast.LENGTH_SHORT).show();
         }
@@ -250,7 +268,9 @@ public class DrawingView extends View {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+//                    mbitmapbackupcanvas.drawBitmap(mCanvasBitmap,0,0,null);
                     undoPath.clear();
+                    mDrawPath.reset();
                     mDrawPath.moveTo(touchX, touchY);
                     mTouchPoints.add(new ArrayList<Point>());//ACTION_DOWN event means a new stroke so a new ArrayList
                     break;
@@ -260,8 +280,9 @@ public class DrawingView extends View {
                 case MotionEvent.ACTION_UP:
                     //mVibrationStartTime = 0;
                     mDrawCanvas.drawPath(mDrawPath, mDrawPaint);
-                    paths.add(mDrawPath);
-                    mDrawPath.reset();//End of the current stroke
+                    paths.push(new Path(mDrawPath));
+                    mDrawPath=new Path();
+                   // mDrawPath.reset();//End of the current stroke
                     invalidate();
                     break;
                 default:
