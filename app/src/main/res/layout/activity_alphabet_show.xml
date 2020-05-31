@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".alphabetShow">
+    tools:context=".background.alphabetBaseShow">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/PracticeToolbar"
@@ -13,13 +13,26 @@
         android:layout_height="wrap_content"
         android:background="@color/ActionbarBg"
         app:title="CONGRATS " />
-    <Button
-        android:id="@+id/erase"
+
+    <TextView
+        android:id="@+id/score_and_timer_View"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ERASE FROM HERE"
-        android:onClick="erase"
-        android:layout_marginTop="55dp"/>
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/PracticeToolbar"
+        android:textSize="35sp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:id="@+id/best_score_View"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/score_and_timer_View"
+        android:textSize="25sp"
+        android:textColor="#000000"/>
 
     <SeekBar
         android:id="@+id/size1"
@@ -31,7 +44,7 @@
         android:progress="3"
         android:visibility="invisible" />
 
-    <com.example.myapplication.DrawingView
+    <com.example.myapplication.background.DrawingView
             android:id="@+id/DrawingView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -47,7 +60,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginBottom="0dp"
-            android:onClick="practiceonclick"
+            android:onClick="practiceOnClick"
             app:button_color="@color/ButtonBg"
             app:image="@drawable/ic_done" />
 
@@ -58,7 +71,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:onClick="practiceonclick"
+            android:onClick="practiceOnClick"
             app:button_color="@color/ButtonBg"
             app:image="@drawable/ic_reset" />
 </RelativeLayout>

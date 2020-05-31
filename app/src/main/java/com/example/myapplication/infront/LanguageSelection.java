@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.infront;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -8,6 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.myapplication.infront.CharacterSelection;
+import com.example.myapplication.R;
+import com.example.myapplication.infront.SplashScreen;
 
 import java.util.Locale;
 
@@ -40,6 +44,10 @@ public class LanguageSelection extends AppCompatActivity {
                 break;
             case R.id.number:
                 setLocale("hi");
+                intent = new Intent(this, CharacterSelection.class);
+                break;
+            case R.id.hindi:
+                setLocale("bn");
                 intent = new Intent(this, CharacterSelection.class);
                 break;
         }

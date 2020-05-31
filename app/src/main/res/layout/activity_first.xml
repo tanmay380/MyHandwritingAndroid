@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LanguageSelection">
+    tools:context=".infront.LanguageSelection"
+    android:orientation="vertical">
 
 <android.support.v7.widget.Toolbar
     android:layout_width="match_parent"
@@ -14,34 +15,49 @@
     app:titleTextAppearance="@style/AppTheme.Toolbar.Title"/>
 
     <info.hoang8f.widget.FButton
-        android:layout_width="330dp"
-        android:layout_height="104dp"
+        android:id="@+id/english"
+        android:layout_width="294dp"
+        android:layout_height="159dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginTop="151dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginBottom="476dp"
-        android:text="@string/English"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="527dp"
         android:onClick="langueageselect"
-        android:id="@+id/english"/>
+        android:text="@string/English" />
 
     <info.hoang8f.widget.FButton
         android:id="@+id/number"
-        android:layout_width="314dp"
-        android:layout_height="92dp"
+        android:layout_width="294dp"
+        android:layout_height="159dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="39dp"
-        android:layout_marginTop="331dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginBottom="308dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="293dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="328dp"
         android:onClick="langueageselect"
         android:text="Numbers" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/hindi"
+        android:layout_width="294dp"
+        android:layout_height="159dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="517dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="110dp"
+        android:onClick="langueageselect"
+        android:text="HINDI" />
 
 
 </RelativeLayout>

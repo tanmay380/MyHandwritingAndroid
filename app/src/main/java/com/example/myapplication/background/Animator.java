@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.background;
 
 import android.animation.ObjectAnimator;
 import android.view.View;

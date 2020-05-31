@@ -1,33 +1,45 @@
-package com.example.myapplication;
+package com.example.myapplication.background;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TimePicker;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.myapplication.R;
+import com.example.myapplication.infront.SplashScreen;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Stack;
 
 public class DrawingView extends View {
     private Path mDrawPath;
-
-    private HashMap<Integer, Path> pathMap; // current Paths being drawn
-    private HashMap<Integer, Point> previousPointMap; // current Points
+    private Stack<Bitmap> bitmapbackupstack= new Stack<Bitmap>();
     private Stack<Path> paths= new Stack<Path>();
     private ArrayList<Path> undoPath= new ArrayList<>();
 
@@ -46,7 +58,7 @@ public class DrawingView extends View {
     /**
      * The bitmap that is set
      */
-    private Bitmap mCanvasBitmap;
+    public Bitmap mCanvasBitmap,bitmapbackup;
 
     /**
      * Vibrator instance to vibrate if the user traces outside the boundary of the string
@@ -92,6 +104,8 @@ public class DrawingView extends View {
     private int currentWidht = 12;
     private boolean candraw = true;
     private Boolean erase = false;
+    private Boolean mScoring;
+    private Toast mErrorToast;
 
 
     public DrawingView(Context context) {
@@ -120,6 +134,18 @@ public class DrawingView extends View {
         //Getting display width and
         mHeight = SplashScreen.displayMetrics.heightPixels;
         mWidth = SplashScreen.displayMetrics.widthPixels;
+
+        ((Activity)mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mErrorToast = new Toast(mContext);
+                mErrorToast.setGravity(Gravity.CENTER_HORIZONTAL, 0, mHeight / 4);
+                mErrorToast.setDuration(Toast.LENGTH_SHORT);
+                mErrorToast.setView(((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.toast,
+                        (ViewGroup) findViewById(R.id.toast_layout_root)));
+            }
+        });
+
         //initializing without context
         init();
     }
@@ -148,6 +174,7 @@ public class DrawingView extends View {
         mCorrectTouches = 0;
         mWrongTouches = 0;
         mDraw = true;
+//        bitmapbackup= new Bitmap();
 
         minX = mWidth;
         maxX = -1;
@@ -155,7 +182,7 @@ public class DrawingView extends View {
         maxY = -1;
 
         mVibrate = true;
-
+        mScoring=true;
 
         mTouchPoints = new ArrayList<>(); //Empty list as no touches yet
 
@@ -167,14 +194,12 @@ public class DrawingView extends View {
         }
         mCanvasBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_4444);
         mDrawCanvas = new Canvas(mCanvasBitmap);
+        bitmapbackup=Bitmap.createBitmap(mWidth,mHeight,Bitmap.Config.ARGB_4444);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-
         //draw view
-
-
         canvas.drawBitmap(mCanvasBitmap, 0, 0, mCanvasPaint);
         canvas.drawPath(mDrawPath, mDrawPaint);
         mDrawPaint.setStrokeWidth(currentWidht);
@@ -220,16 +245,13 @@ public class DrawingView extends View {
     }
 
     public void onClickUndo () {
-        if (paths.size()>0) {
-            paths.pop();
-            mDrawCanvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
+        if (bitmapbackupstack.size()>0) {
 
-            Toast.makeText(getContext(),Integer.toString(paths.size()),Toast.LENGTH_SHORT).show();
 
-            for (Path p:paths
+            for (Bitmap b:bitmapbackupstack
             ) {//mDrawCanvas.drawBitmap();
                // mDrawCanvas.drawColor(Color.WHITE);
-                mDrawCanvas.drawPath(p,mDrawPaint);}
+                mDrawCanvas.drawBitmap(b,0,0,mCanvasPaint);}
 
         }else{
             Toast.makeText(getContext(),"NOTHING TO UNDO", Toast.LENGTH_SHORT).show();
@@ -262,12 +284,31 @@ public class DrawingView extends View {
                 minY = y;
             if (y > maxY)
                 maxY = y;
-            //if(mScoring) {
-            //checking if the touches are correct or wrong (inside or outside the boundary
+
+            if(mScoring) {
+                //checking if the touches are correct or wrong (inside or outside the boundary
+                if ((x >= 0 && x < mWidth && y >= 0 && y < mHeight && mCanvasBitmap.getPixel(x, y) == Color.TRANSPARENT) || (x < 0 || x >= mWidth || y < 0 || y >= mHeight)) {
+                    mWrongTouches++;
+                    if (mVibrate) {//Device will vibrate only if mVibrate is true
+                        mVibrator.vibrate(100);
+                        if (mVibrationStartTime == 0) {
+                            mVibrationStartTime = new Date().getTime();
+                            mErrorToast.cancel();
+                        } else if (new Date().getTime() - mVibrationStartTime > 1000 && mErrorToast.getView().getWindowVisibility() != View.VISIBLE) {
+                            mErrorToast.show();
+                        }
+                    }
+                } else {
+                    mVibrationStartTime = 0;
+                    mCorrectTouches++;
+                }
+            }
 
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    bitmapbackup.copy(mCanvasBitmap.getConfig(),true);
+                    bitmapbackupstack.push(bitmapbackup);
 //                    mbitmapbackupcanvas.drawBitmap(mCanvasBitmap,0,0,null);
                     undoPath.clear();
                     mDrawPath.reset();
@@ -280,7 +321,8 @@ public class DrawingView extends View {
                 case MotionEvent.ACTION_UP:
                     //mVibrationStartTime = 0;
                     mDrawCanvas.drawPath(mDrawPath, mDrawPaint);
-                    paths.push(new Path(mDrawPath));
+                    //paths.push(new Path(mDrawPath));
+
                     mDrawPath=new Path();
                    // mDrawPath.reset();//End of the current stroke
                     invalidate();
@@ -295,17 +337,109 @@ public class DrawingView extends View {
 
         return true;
     }
+    public float score() {
+        return (mCorrectTouches + mWrongTouches !=0)?100* mCorrectTouches /(mCorrectTouches + mWrongTouches):0;
+    }
+    public void canScore(boolean scoring){
+        mScoring = scoring;
+    }
+
+    public Bitmap getBitmap() {
+        Bitmap overlayBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_4444);
+        overlayBitmap.eraseColor(getResources().getColor(R.color.AppBg));
+        Canvas canvas = new Canvas(overlayBitmap);
+        canvas.drawBitmap(mCanvasBitmap,0,0,null);
+        return overlayBitmap;
+    }
 
     public void candraw(boolean draw) {
         candraw = draw;
     }
 
-    public void canvibrate(boolean vibrate) {
+    public void canVibrate(boolean vibrate) {
         mVibrate = vibrate;
     }
 
     public void setCurrentWidth(int width) {
         currentWidht = (width + 1) * 4;
         //Toast.makeText(getContext(),Integer.toString(currentWidht),Toast.LENGTH_SHORT).show();
+    }
+    public String saveBitmap(String practiceString, String dirExtra) {
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name) + dirExtra);
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            return "Could not save trace. Unable to create directory";
+        } else {//Compress the bitmap and then store it
+            File file;
+            if (!dirExtra.equals(""))
+                file = new File(mediaStorageDir.getPath() + File.separator + practiceString + "_" + String.valueOf(score()) + ".jpg");
+            else
+                file = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + "_" + practiceString + ".jpg");
+
+            int actualHeight = mHeight;
+            int actualWidth = mWidth;
+
+            float maxHeight = 800.0f;
+            float maxWidth = 600.0f;
+            float imgRatio = actualWidth / actualHeight;
+            float maxRatio = maxWidth/maxHeight;
+
+            if (actualHeight > maxHeight || actualWidth > maxWidth) {
+                if (imgRatio < maxRatio) {
+                    imgRatio = maxHeight / actualHeight;
+                    actualWidth = (int) (imgRatio * actualWidth);
+                    actualHeight = (int) maxHeight;
+                } else if (imgRatio > maxRatio) {
+                    imgRatio = maxWidth / actualWidth;
+                    actualHeight = (int) (imgRatio * actualHeight);
+                    actualWidth = (int) maxWidth;
+                } else {
+                    actualHeight = (int) maxHeight;
+                    actualWidth = (int) maxWidth;
+                }
+            }
+            Bitmap scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.ARGB_4444);
+
+            float ratioX = actualWidth / (float) mWidth;
+            float ratioY = actualHeight / (float) mHeight;
+            float middleX = actualWidth / 2.0f;
+            float middleY = actualHeight / 2.0f;
+
+            Matrix scaleMatrix = new Matrix();
+            scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+
+            Canvas canvas = new Canvas(scaledBitmap);
+            canvas.setMatrix(scaleMatrix);
+            canvas.drawBitmap(getBitmap(), middleX - mWidth / 2, middleY - mHeight / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+            ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, tempStream);
+
+            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+
+            try{
+                FileOutputStream fOut = new FileOutputStream(file);
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                fOut.flush();
+                fOut.close();
+                return file.getPath();
+            } catch (FileNotFoundException e) {
+                file.delete();
+                return "Could not save trace. Unable to open file";
+            } catch (IOException e) {
+                file.delete();
+                return "Could not save trace. Unable to save file";
+            }
+        }
+    }
+
+    /**
+     * Function to release the memory used by the DrawingView
+     */
+    void destroyBitmap() {
+        if(mCanvasBitmap!=null) {
+            mCanvasBitmap.recycle();
+            mCanvasBitmap = null;
+            mDrawCanvas = null;
+        }
     }
 }

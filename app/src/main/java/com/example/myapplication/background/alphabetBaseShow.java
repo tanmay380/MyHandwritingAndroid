@@ -1,27 +1,31 @@
-package com.example.myapplication;
+package com.example.myapplication.background;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.R;
+import com.example.myapplication.infront.CharacterSelection;
+import com.example.myapplication.infront.SplashScreen;
 import com.software.shell.fab.ActionButton;
 
-import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -29,40 +33,64 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-public class alphabetShow extends AppCompatActivity {
+public class alphabetBaseShow extends AppCompatActivity {
 
-    protected String mPractiseString;
-    protected DrawingView mdrawview;
+    protected String mPracticeString;
+    protected DrawingView mDrawView;
     public SeekBar seekBar;
     Button button;
     public boolean draw = true;
-    private Canvas canvas;
+    AudioManager audio;
+    protected TextView mScoreTimerView;
+    protected TextView mBestScoreView;
+    protected boolean mDone;
+    //private TextToSpeech textToSpeech;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alphabet_show);
 
-        mdrawview = new DrawingView(this);
+        // textToSpeech=new TextToSpeech(this,LanguageSelection);
+        mDrawView = new DrawingView(this);
         seekBar = findViewById(R.id.size1);
-        button = findViewById(R.id.erase);
-        mdrawview = findViewById(R.id.DrawingView);
-        mPractiseString = getIntent().getStringExtra(getResources().getString(R.string.practice_string));
+        mDrawView = findViewById(R.id.DrawingView);
+        mBestScoreView = (TextView) findViewById(R.id.best_score_View);
+        mScoreTimerView = (TextView) findViewById(R.id.score_and_timer_View);
+        mPracticeString = getIntent().getStringExtra(getResources().getString(R.string.practice_string));
         Toolbar toolbar = findViewById(R.id.PracticeToolbar);
         setSupportActionBar(toolbar);
 
-        mdrawview.canvibrate(true);
-        mdrawview.setBitmapFromText(mPractiseString);
+        mDone = false;
+
+        mDrawView.canVibrate(true);
+        mDrawView.setBitmapFromText(mPracticeString);
+
+        audio = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+        /*switch (audio.getStreamVolume(AudioManager.STREAM_MUSIC)) {
+            case AudioManager.RINGER_MODE_SILENT:
+                Toast.makeText(getApplicationContext(), "TURN UP THE VOLUME", Toast.LENGTH_SHORT).show();
+        }*/
+        if((audio.getStreamVolume(AudioManager.STREAM_MUSIC)>1)){
+            SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
+        }else if(audio.getStreamVolume(AudioManager.STREAM_MUSIC)==0){
+            audio.setStreamVolume(AudioManager.STREAM_MUSIC,10,1);
+
+            SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
+        }
 
     }
+
 
     public void erase(View v) {
         {
             if (button.getText() == "START TO DRAW") {
-                mdrawview.canerase(false);
+                mDrawView.canerase(false);
                 button.setText("Erase from here");
             } else {
-                mdrawview.canerase(true);
+                mDrawView.canerase(true);
                 button.setText("START TO DRAW");
             }
 
@@ -75,10 +103,10 @@ public class alphabetShow extends AppCompatActivity {
         if (seekBar.getVisibility() == View.INVISIBLE) {
             seekBar.setVisibility(View.VISIBLE);
             seekBar.bringToFront();
-            mdrawview.candraw(false);
+            mDrawView.candraw(false);
         } else {
             seekBar.setVisibility(View.INVISIBLE);
-            mdrawview.candraw(true);
+            mDrawView.candraw(true);
         }
 
     }
@@ -92,7 +120,7 @@ public class alphabetShow extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mdrawview.setCurrentWidth(progress);
+                mDrawView.setCurrentWidth(progress);
             }
 
             @Override
@@ -108,26 +136,36 @@ public class alphabetShow extends AppCompatActivity {
         return;
     }
 
-    public void practiceonclick(View v) {
+    public void practiceOnClick(View v) {
         switch (v.getId()) {
             case R.id.reset:
-                ActionButton save = findViewById(R.id.done);
-                Animator.createYFlipBackwardAnimation(findViewById(R.id.done));
-                ((ActionButton) findViewById(R.id.done)).setImageResource(R.drawable.ic_done);
-                button.setText("Erase from here");
-                mdrawview.init();
-                mdrawview.setBitmapFromText(mPractiseString);
-                break;
+                if(mDone) {
+                    ActionButton save = findViewById(R.id.done);
+                    Animator.createYFlipBackwardAnimation(findViewById(R.id.done));
+                    ((ActionButton) findViewById(R.id.done)).setImageResource(R.drawable.ic_done);
+//                button.setText("Erase from here");
+                    mDone=false;
+                }
+                    mDrawView.init();
+                    mDrawView.setBitmapFromText(mPracticeString);
+                    break;
+
             case R.id.done:
+                if(mDone){/*
                 Animator.createYFlipForwardAnimation(findViewById(R.id.done));
                 ((ActionButton) findViewById(R.id.done)).setImageResource(R.drawable.ic_save);
                 Animator.createYFlipBackwardAnimation(findViewById(R.id.done));
-        }
+        */
+                    String result = mDrawView.saveBitmap(mPracticeString,"");
+                    if(result.charAt(0)=='/')
+                        result = "Trace Saved";
+                    Toast.makeText(this,result,Toast.LENGTH_SHORT).show();//Toast displayed with the status of saving the trace
+                }}
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int next = Arrays.asList(SplashScreen.CHARACTER_LIST).indexOf(mPractiseString);
+        int next = Arrays.asList(SplashScreen.CHARACTER_LIST).indexOf(mPracticeString);
         switch (item.getItemId()) {
             case R.id.action_next:
                 next = (next + 1) % SplashScreen.CHARACTER_LIST.length;
@@ -138,19 +176,11 @@ public class alphabetShow extends AppCompatActivity {
             case R.id.setting:
                 clickit();
                 break;
-            case R.id.undo:
-                mdrawview.onClickUndo();
-               // mdrawview.setBitmapFromText(mPractiseString);
-                break;
-            case R.id.redo:
-                mdrawview.onClickRedo();
-
-                break;
-
         }
         if (item.getItemId() == R.id.action_next || item.getItemId() == R.id.action_previous) {
-            mPractiseString = SplashScreen.CHARACTER_LIST[next];
-            mdrawview.setBitmapFromText(mPractiseString);
+            mPracticeString = SplashScreen.CHARACTER_LIST[next];
+            mDrawView.setBitmapFromText(mPracticeString);
+            SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
         }
         return super.onOptionsItemSelected(item);
 
@@ -190,5 +220,11 @@ public class alphabetShow extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(alphabetBaseShow.this, CharacterSelection.class));
+        super.onBackPressed();
     }
 }

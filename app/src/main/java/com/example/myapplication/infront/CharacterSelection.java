@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.infront;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,12 +7,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.view.Display;
-import android.view.KeyboardShortcutGroup;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import com.example.myapplication.R;
+import com.example.myapplication.background.Animator;
+import com.example.myapplication.background.alphabetBaseShow;
 
 import java.util.Random;
 
@@ -67,7 +69,7 @@ public class CharacterSelection extends Activity {
                @Override
                public void onClick(View v) {
                    Intent intent;
-                   intent = new Intent(CharacterSelection.this, alphabetShow.class);
+                   intent = new Intent(CharacterSelection.this, alphabetBaseShow.class);
                    intent.putExtra(getResources().getString(R.string.practice_string),((Button)v).getText());
                    startActivity(intent);
 
