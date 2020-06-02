@@ -69,7 +69,7 @@ public class CharacterSelection extends Activity {
                @Override
                public void onClick(View v) {
                    Intent intent;
-                   intent = new Intent(CharacterSelection.this, alphabetBaseShow.class);
+                   intent = new Intent(CharacterSelection.this, alphabetshow.class);
                    intent.putExtra(getResources().getString(R.string.practice_string),((Button)v).getText());
                    startActivity(intent);
 

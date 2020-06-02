@@ -39,8 +39,6 @@ import java.util.Stack;
 
 public class DrawingView extends View {
     private Path mDrawPath;
-    private Stack<Bitmap> bitmapbackupstack= new Stack<Bitmap>();
-    private Stack<Path> paths= new Stack<Path>();
     private ArrayList<Path> undoPath= new ArrayList<>();
 
     private DisplayMetrics displayMetrics;
@@ -53,12 +51,12 @@ public class DrawingView extends View {
     /**
      * The canvas of the view
      */
-    private Canvas mDrawCanvas,mbitmapbackupcanvas;
+    private Canvas mDrawCanvas;
 
     /**
      * The bitmap that is set
      */
-    public Bitmap mCanvasBitmap,bitmapbackup;
+    public Bitmap mCanvasBitmap;
 
     /**
      * Vibrator instance to vibrate if the user traces outside the boundary of the string
@@ -174,7 +172,6 @@ public class DrawingView extends View {
         mCorrectTouches = 0;
         mWrongTouches = 0;
         mDraw = true;
-//        bitmapbackup= new Bitmap();
 
         minX = mWidth;
         maxX = -1;
@@ -194,7 +191,6 @@ public class DrawingView extends View {
         }
         mCanvasBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_4444);
         mDrawCanvas = new Canvas(mCanvasBitmap);
-        bitmapbackup=Bitmap.createBitmap(mWidth,mHeight,Bitmap.Config.ARGB_4444);
     }
 
     @Override
@@ -203,6 +199,10 @@ public class DrawingView extends View {
         canvas.drawBitmap(mCanvasBitmap, 0, 0, mCanvasPaint);
         canvas.drawPath(mDrawPath, mDrawPaint);
         mDrawPaint.setStrokeWidth(currentWidht);
+    }
+
+    public void setcolor(int color){
+        mDrawPaint.setColor(color);
     }
 
     public void setBitmapFromText(String str) {
@@ -244,27 +244,7 @@ public class DrawingView extends View {
 
     }
 
-    public void onClickUndo () {
-        if (bitmapbackupstack.size()>0) {
 
-
-            for (Bitmap b:bitmapbackupstack
-            ) {//mDrawCanvas.drawBitmap();
-               // mDrawCanvas.drawColor(Color.WHITE);
-                mDrawCanvas.drawBitmap(b,0,0,mCanvasPaint);}
-
-        }else{
-            Toast.makeText(getContext(),"NOTHING TO UNDO", Toast.LENGTH_SHORT).show();
-        }
-    } public void onClickRedo () {
-        if (undoPath.size()>0) {
-            Toast.makeText(getContext(),Integer.toString(undoPath.size()),Toast.LENGTH_SHORT).show();
-            paths.add(undoPath.remove(undoPath.size()-1));
-            //invalidate();
-        }else{
-            Toast.makeText(getContext(),"NOTHING TO REDO", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -307,11 +287,6 @@ public class DrawingView extends View {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    bitmapbackup.copy(mCanvasBitmap.getConfig(),true);
-                    bitmapbackupstack.push(bitmapbackup);
-//                    mbitmapbackupcanvas.drawBitmap(mCanvasBitmap,0,0,null);
-                    undoPath.clear();
-                    mDrawPath.reset();
                     mDrawPath.moveTo(touchX, touchY);
                     mTouchPoints.add(new ArrayList<Point>());//ACTION_DOWN event means a new stroke so a new ArrayList
                     break;
@@ -319,12 +294,11 @@ public class DrawingView extends View {
                     mDrawPath.lineTo(touchX, touchY);
                     break;
                 case MotionEvent.ACTION_UP:
-                    //mVibrationStartTime = 0;
+                    mVibrationStartTime = 0;
                     mDrawCanvas.drawPath(mDrawPath, mDrawPaint);
                     //paths.push(new Path(mDrawPath));
 
-                    mDrawPath=new Path();
-                   // mDrawPath.reset();//End of the current stroke
+                    mDrawPath.reset();//End of the current stroke
                     invalidate();
                     break;
                 default:

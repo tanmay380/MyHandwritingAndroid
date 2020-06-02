@@ -60,6 +60,8 @@
     </string-array>
 
 
+    <string name="open">Open</string>
+    <string name="close">Close</string>
     <string name="title_activity_language">LanguageActivity</string>
     <string name="title_activity_main_menu">MainMenuActivity</string>
     <string name="title_activity_incomplete">IncompleteActivity</string>
