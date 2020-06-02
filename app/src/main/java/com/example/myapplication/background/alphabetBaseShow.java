@@ -1,22 +1,15 @@
 package com.example.myapplication.background;
 
-import android.Manifest;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +22,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.example.myapplication.R;
 import com.example.myapplication.infront.CharacterSelection;
@@ -43,7 +35,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-public class alphabetBaseShow extends AppCompatActivity {
+public class alphabetBaseShow extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -59,6 +51,7 @@ public class alphabetBaseShow extends AppCompatActivity {
     public AlertDialog.Builder alertDialog;
     private static final int STORAGE_PERMISSION_CODE = 101;
     public TextView colorset;
+    public NavigationView navigationView;
     //private TextToSpeech textToSpeech;
 
 
@@ -72,13 +65,12 @@ public class alphabetBaseShow extends AppCompatActivity {
             Toolbar toolbar = findViewById(R.id.PracticeToolbar);
             setSupportActionBar(toolbar);
             // textToSpeech=new TextToSpeech(this,LanguageSelection);
-            drawerLayout=findViewById(R.id.drawerLayout);
-            actionBarDrawerToggle=new ActionBarDrawerToggle(this,drawerLayout,R.string.close,R.string.open);
+            drawerLayout = findViewById(R.id.drawerLayout);
+            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.close, R.string.open);
             drawerLayout.addDrawerListener(actionBarDrawerToggle);
             actionBarDrawerToggle.syncState();
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
 
             mDrawView = new DrawingView(this);
@@ -88,7 +80,6 @@ public class alphabetBaseShow extends AppCompatActivity {
             mScoreTimerView = (TextView) findViewById(R.id.score_and_timer_View);
             mPracticeString = getIntent().getStringExtra(getResources().getString(R.string.practice_string));
             mDone = false;
-
             mScoreTimerView.bringToFront();
 
             mDrawView.canVibrate(true);
@@ -111,10 +102,7 @@ public class alphabetBaseShow extends AppCompatActivity {
             showErrorDialog(e);
         }
 
-
     }
-
-
 
 
     private void toggleSeekbar() {
@@ -133,7 +121,6 @@ public class alphabetBaseShow extends AppCompatActivity {
         toggleSeekbar();
         setSize();
     }
-
 
 
     public void setSize() {
@@ -211,7 +198,7 @@ public class alphabetBaseShow extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         if (!mDone) {
@@ -238,7 +225,7 @@ public class alphabetBaseShow extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void colorclick(View v) {
+    /*public void colorclick(View v) {
         switch (v.getId()) {
             case R.id.blue:
                 mDrawView.setcolor(Color.BLUE);
@@ -253,13 +240,13 @@ public class alphabetBaseShow extends AppCompatActivity {
                 mDrawView.setcolor(Color.YELLOW);
                 break;
             case R.id.brown:
-                mDrawView.setcolor(Color.rgb(185,122,87));
+                mDrawView.setcolor(Color.rgb(185, 122, 87));
                 break;
             case R.id.grey:
                 mDrawView.setcolor(Color.GRAY);
                 break;
         }
-    }
+    }*/
 
 
     protected void showErrorDialog(final Exception e) {
@@ -304,4 +291,25 @@ public class alphabetBaseShow extends AppCompatActivity {
         super.onBackPressed();
     }
 
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        switch (id) {
+            case R.id.green:
+                SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
+                break;
+            case R.id.red:
+                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.black:
+                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.blue:
+                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+        return true;
+    }
 }

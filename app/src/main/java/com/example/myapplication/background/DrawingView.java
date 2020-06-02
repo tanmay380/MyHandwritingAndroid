@@ -99,7 +99,7 @@ public class DrawingView extends View {
     public int mHeight;
 
     // private ArrayList<Integer> widths= new ArrayList<>();
-    private int currentWidht = 12;
+    private int currentWidht;
     private boolean candraw = true;
     private Boolean erase = false;
     private Boolean mScoring;
@@ -155,7 +155,7 @@ public class DrawingView extends View {
     public void init() {
         //get drawing area setup for interaction
         int mTouchColour = getResources().getColor(R.color.Red);
-
+        currentWidht=80;
 
         mDrawPath = new Path();
         mDrawPaint = new Paint();
@@ -335,7 +335,7 @@ public class DrawingView extends View {
     }
 
     public void setCurrentWidth(int width) {
-        currentWidht = (width + 1) * 4;
+        currentWidht = (width + 1) * 7;
         //Toast.makeText(getContext(),Integer.toString(currentWidht),Toast.LENGTH_SHORT).show();
     }
     public String saveBitmap(String practiceString, String dirExtra) {
