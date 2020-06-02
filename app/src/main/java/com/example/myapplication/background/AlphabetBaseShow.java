@@ -8,12 +8,12 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-public class alphabetBaseShow extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class AlphabetBaseShow extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -57,49 +57,44 @@ public class alphabetBaseShow extends AppCompatActivity implements NavigationVie
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
-            System.gc();
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_alphabet_show);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_alphabet_show);
 
-            Toolbar toolbar = findViewById(R.id.PracticeToolbar);
-            setSupportActionBar(toolbar);
-            // textToSpeech=new TextToSpeech(this,LanguageSelection);
-            drawerLayout = findViewById(R.id.drawerLayout);
-            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.close, R.string.open);
-            drawerLayout.addDrawerListener(actionBarDrawerToggle);
-            actionBarDrawerToggle.syncState();
+        Toolbar toolbar = findViewById(R.id.PracticeToolbar);
+        setSupportActionBar(toolbar);
+        // textToSpeech=new TextToSpeech(this,LanguageSelection);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.close, R.string.open);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-            mDrawView = new DrawingView(this);
-            seekBar = findViewById(R.id.size1);
-            mDrawView = findViewById(R.id.DrawingView);
-            mBestScoreView = (TextView) findViewById(R.id.best_score_View);
-            mScoreTimerView = (TextView) findViewById(R.id.score_and_timer_View);
-            mPracticeString = getIntent().getStringExtra(getResources().getString(R.string.practice_string));
-            mDone = false;
-            mScoreTimerView.bringToFront();
+        mDrawView = new DrawingView(this);
+        seekBar = findViewById(R.id.size1);
+        mDrawView = findViewById(R.id.DrawingView);
+        mBestScoreView = (TextView) findViewById(R.id.best_score_View);
+        mScoreTimerView = (TextView) findViewById(R.id.score_and_timer_View);
+        mPracticeString = getIntent().getStringExtra(getResources().getString(R.string.practice_string));
+        mDone = false;
+        mScoreTimerView.bringToFront();
 
-            mDrawView.canVibrate(true);
-            mDrawView.setBitmapFromText(mPracticeString);
+        mDrawView.canVibrate(true);
+        mDrawView.setBitmapFromText(mPracticeString);
 
-            audio = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        audio = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
         /*switch (audio.getStreamVolume(AudioManager.STREAM_MUSIC)) {
             case AudioManager.RINGER_MODE_SILENT:
                 Toast.makeText(getApplicationContext(), "TURN UP THE VOLUME", Toast.LENGTH_SHORT).show();
         }*/
-            if ((audio.getStreamVolume(AudioManager.STREAM_MUSIC) > 1)) {
-                SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
-            } else if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
-                audio.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 1);
+        if ((audio.getStreamVolume(AudioManager.STREAM_MUSIC) > 1)) {
+            SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
+        } else if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
+            audio.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 1);
 
-                SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
-            }
-        } catch (Exception e) {
-            showErrorDialog(e);
+            SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
         }
 
     }
@@ -287,7 +282,7 @@ public class alphabetBaseShow extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(alphabetBaseShow.this, CharacterSelection.class));
+        startActivity(new Intent(AlphabetBaseShow.this, CharacterSelection.class));
         super.onBackPressed();
     }
 
@@ -296,20 +291,25 @@ public class alphabetBaseShow extends AppCompatActivity implements NavigationVie
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
         switch (id) {
+
             case R.id.green:
                 SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
-                break;
+                return true;
+
             case R.id.red:
-                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
-                break;
+                Toast.makeText(this, "Red", Toast.LENGTH_SHORT).show();
+                return true;
+
             case R.id.black:
-                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
-                break;
+                Toast.makeText(this, "Black", Toast.LENGTH_SHORT).show();
+                return true;
+
             case R.id.blue:
-                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
-                break;
+                Toast.makeText(this, "Blue", Toast.LENGTH_SHORT).show();
+                return true;
+
 
         }
-        return true;
+        return false;
     }
 }

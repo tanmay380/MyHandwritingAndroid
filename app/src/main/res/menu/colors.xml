@@ -16,8 +16,7 @@
         <item
             android:id="@+id/red"
             android:icon="@drawable/ic_save"
-            android:title="RED"
-            android:onClick="toast"/>
+            android:title="RED"/>
 
     </group>
 </menu>

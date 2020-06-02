@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="ActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="ActionBarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <item name="android:windowActionBar">false</item>
 
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/MyActionBar</item>
@@ -25,7 +24,7 @@
         <item name="android:textColor">@color/White</item>
     </style>
 
-    <style name="ActionBarTheme.NoActionBar">
+    <style name="ActionBarTheme.NoActionBar" parent="ActionBarTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
