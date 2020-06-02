@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-public class alphabetBaseShow extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class alphabetBaseShow extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -292,24 +292,5 @@ public class alphabetBaseShow extends AppCompatActivity implements NavigationVie
     }
 
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        int id = menuItem.getItemId();
-        switch (id) {
-            case R.id.green:
-                SplashScreen.TTSobj.speak(mPracticeString, TextToSpeech.QUEUE_FLUSH, null, null);
-                break;
-            case R.id.red:
-                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.black:
-                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.blue:
-                Toast.makeText(getApplicationContext(), "REd", Toast.LENGTH_SHORT).show();
-                break;
 
-        }
-        return true;
-    }
 }

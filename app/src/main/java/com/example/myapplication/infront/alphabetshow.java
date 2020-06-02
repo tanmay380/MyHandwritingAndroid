@@ -16,7 +16,7 @@ import com.example.myapplication.background.alphabetBaseShow;
 /**
  * Activity for normal practice of characters and words
  */
-public class alphabetshow extends alphabetBaseShow implements OnNavigationItemSelectedListener {
+public class alphabetshow extends alphabetBaseShow  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +27,6 @@ public class alphabetshow extends alphabetBaseShow implements OnNavigationItemSe
         } catch (Exception e) {
             showErrorDialog(e);
         }
-
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-                Toast.makeText(getApplicationContext(),"sdfsdf",Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-
-
-
     }
 
     @Override
